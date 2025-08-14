@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+            <databaseChangeLog
+                    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
+
+                <changeSet id="4" author="loith">
+                    <createTable tableName="product_images" schemaName="public">
+                        <column name="id" type="UUID">
+                            <constraints primaryKey="true" nullable="false"/>
+                        </column>
+                        <column name="product_id" type="UUID">
+                            <constraints nullable="false"
+                                         foreignKeyName="fk_product_images_products"
+                                         references="products(id)"/>
+                        </column>
+                        <column name="image_url" type="TEXT">
+                            <constraints nullable="false"/>
+                        </column>
+                        <column name="created_at" type="timestamp"
+                                defaultValueComputed="CURRENT_TIMESTAMP"/>
+                        <column name="updated_at" type="timestamp"
+                                defaultValueComputed="CURRENT_TIMESTAMP"/>
+                    </createTable>
+                    <addDefaultValue
+                            columnDataType="UUID"
+                            columnName="id"
+
+                            defaultValueComputed="gen_random_uuid ()"
+                            tableName="product_images"/>
+                </changeSet>
+
+            </databaseChangeLog>
