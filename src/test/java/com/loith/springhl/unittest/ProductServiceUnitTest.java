@@ -1,8 +1,8 @@
 package com.loith.springhl.unittest;
 
-import com.loith.springhl.dto.Product;
-import com.loith.springhl.dto.ProductCreateDtoRequest;
-import com.loith.springhl.dto.ProductUpdateDtoRequest;
+import com.loith.springhl.dto.request.ProductCreateDtoRequest;
+import com.loith.springhl.dto.request.ProductUpdateDtoRequest;
+import com.loith.springhl.dto.response.Product;
 import com.loith.springhl.entity.ProductEntity;
 import com.loith.springhl.repository.ProductRepository;
 import com.loith.springhl.service.ProductService;

@@ -23,12 +23,10 @@ public class ProductEntity {
 
   private double price;
 
-  //  @CreatedDate
   @Column("created_at")
   private Instant createdAt;
 
   @Column("updated_at")
-  //  @LastModifiedDate
   private Instant updatedAt;
 
   @Column("category_id")

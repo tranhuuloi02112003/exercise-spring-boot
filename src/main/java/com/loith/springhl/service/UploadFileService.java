@@ -3,13 +3,11 @@ package com.loith.springhl.service;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
-
+import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
-import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
@@ -52,10 +50,9 @@ public class UploadFileService {
   }
 
   public List<String> uploadMultipleFiles(List<MultipartFile> files) {
-        List<String> uploadedUrls = new ArrayList<>();
+    List<String> uploadedUrls = new ArrayList<>();
 
-        files.forEach(multipartFile -> uploadedUrls.add(uploadFile(multipartFile)));
-        return uploadedUrls;
-    }
-  
+    files.forEach(multipartFile -> uploadedUrls.add(uploadFile(multipartFile)));
+    return uploadedUrls;
+  }
 }

@@ -1,9 +1,9 @@
 package com.loith.springhl.controller;
 
-import com.loith.springhl.dto.Product;
-import com.loith.springhl.dto.ProductCreateDtoRequest;
-import com.loith.springhl.dto.ProductUpdateDtoRequest;
-import com.loith.springhl.entity.ProductEntity;
+import com.loith.springhl.dto.request.ProductCreateDtoRequest;
+import com.loith.springhl.dto.request.ProductUpdateDtoRequest;
+import com.loith.springhl.dto.response.Product;
+import com.loith.springhl.projection.ProductCategoryProjection;
 import com.loith.springhl.service.ProductService;
 import java.util.List;
 import java.util.UUID;
@@ -22,7 +22,7 @@ public class ProductController {
   //    }
   private final ProductService productService;
 
-//  parse form-data (text + file) vào DTO
+  //  parse form-data (text + file) vào DTO
   @PostMapping()
   @ResponseStatus(HttpStatus.CREATED)
   public Product createProduct(@ModelAttribute ProductCreateDtoRequest productCreateDtoRequest) {
@@ -30,26 +30,24 @@ public class ProductController {
   }
 
   @GetMapping
-  public List<Product> getAllProducts() {
+  public List<ProductCategoryProjection> getAllProducts() {
     return productService.getAll();
   }
 
-  @GetMapping(value = "{id}")
-  public Product getById(@PathVariable UUID id) {
-    return productService.getById(id);
-  }
-
-  @DeleteMapping(value = "{id}")
-  @ResponseStatus(HttpStatus.NO_CONTENT)
-  public void deleteAllProducts(@PathVariable UUID id) {
-    productService.deleteById(id);
-  }
-
-  @PutMapping(value = "{uuid}")
-  public Product updateProduct(
-      @PathVariable UUID uuid, @RequestBody ProductUpdateDtoRequest productUpdateDtoRequest) {
-    return productService.updateProduct(uuid, productUpdateDtoRequest);
-  }
-
-
+//  @GetMapping(value = "{id}")
+//  public Product getById(@PathVariable UUID id) {
+//    return productService.getById(id);
+//  }
+//
+//  @DeleteMapping(value = "{id}")
+//  @ResponseStatus(HttpStatus.NO_CONTENT)
+//  public void deleteAllProducts(@PathVariable UUID id) {
+//    productService.deleteById(id);
+//  }
+//
+//  @PutMapping(value = "{uuid}")
+//  public Product updateProduct(
+//      @PathVariable UUID uuid, @RequestBody ProductUpdateDtoRequest productUpdateDtoRequest) {
+//    return productService.updateProduct(uuid, productUpdateDtoRequest);
+//  }
 }
