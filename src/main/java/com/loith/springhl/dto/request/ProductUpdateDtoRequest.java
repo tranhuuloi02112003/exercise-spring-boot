@@ -1,4 +1,4 @@
-package com.loith.springhl.dto;
+package com.loith.springhl.dto.request;
 
 import lombok.Getter;
 import lombok.Setter;

@@ -1,4 +1,4 @@
-package com.loith.springhl.dto;
+package com.loith.springhl.dto.request;
 
 import java.time.Instant;
 import lombok.Getter;

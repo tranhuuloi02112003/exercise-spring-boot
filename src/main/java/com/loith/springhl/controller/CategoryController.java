@@ -1,7 +1,7 @@
 package com.loith.springhl.controller;
 
-import com.loith.springhl.dto.Category;
-import com.loith.springhl.dto.CategoryCreateDtoRequest;
+import com.loith.springhl.dto.request.CategoryCreateDtoRequest;
+import com.loith.springhl.dto.response.Category;
 import com.loith.springhl.service.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
