@@ -16,7 +16,6 @@ import org.springframework.data.relational.core.mapping.Table;
 public class CategoryEntity {
 
   @Id private UUID id;
-
   private String name;
 
   @Column("created_at")

@@ -20,5 +20,6 @@ public class Product {
   private Instant createdAt;
   private Instant updatedAt;
   private UUID categoryId;
-  private List<String> files;
+  private Category category;
+  private List<String> fileUrls;
 }

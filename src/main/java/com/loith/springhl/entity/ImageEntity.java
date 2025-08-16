@@ -13,7 +13,7 @@ import org.springframework.data.relational.core.mapping.Table;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProductImageEntity {
+public class ImageEntity {
 
   @Id private UUID id;
 
