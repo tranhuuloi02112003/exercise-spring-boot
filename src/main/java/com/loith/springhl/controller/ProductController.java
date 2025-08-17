@@ -18,14 +18,8 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/products")
 @Tag(name = "Products", description = "Product management")
 public class ProductController {
-  //    @Autowired
-  //    ProductService productService;
-  //    public ProductController(ProductService productService) {
-  //        this.productService = productService;
-  //    }
   private final ProductService productService;
 
-  //  parse form-data (text + file) vào DTO
   @Operation(summary = "Create a new product", description = "Create a new product with provided details")
   @ApiResponses(value = {
           @ApiResponse(responseCode = "201", description = "Product created successfully"),

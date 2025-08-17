@@ -4,23 +4,23 @@ import java.time.Instant;
 import java.util.UUID;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.relational.core.mapping.Column;
-import org.springframework.data.relational.core.mapping.Table;
 
-@Table("products")
+@Entity
+@Table(name = "products")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class ProductEntity {
 
   @Id
-  @Column("id")
+  @GeneratedValue(strategy = GenerationType.AUTO)
+  @Column(name = "id")
   @Schema(description = "Unique product ID", example = "550e8400-e29b-41d4-a716-446655440000")
   private UUID id;
 
-  @Column("name")
+  @Column(name = "name")
   @Schema(description = "Product name", example = "iPhone 15 Pro")
   private String name;
 
@@ -30,15 +30,15 @@ public class ProductEntity {
   @Schema(description = "Product price", example = "1000000")
   private double price;
 
-  @Column("created_at")
+  @Column(name = "created_at")
   @Schema(description = "Timestamp when the product was created", example = "2024-08-15T10:15:30Z")
   private Instant createdAt;
 
-  @Column("updated_at")
+  @Column(name = "updated_at")
   @Schema(description = "Timestamp when the product was last updated", example = "2024-08-20T12:00:00Z")
   private Instant updatedAt;
 
-  @Column("category_id")
+  @Column(name = "category_id")
   @Schema(description = "Category ID reference", example = "660e8400-e29b-41d4-a716-556655440111")
   private UUID categoryId;
 }
