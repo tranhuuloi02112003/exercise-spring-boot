@@ -4,6 +4,7 @@ import com.loith.springhl.dto.request.ProductCreateDtoRequest;
 import com.loith.springhl.dto.response.Product;
 import com.loith.springhl.entity.ProductEntity;
 import java.time.Instant;
+import java.util.List;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -17,6 +18,13 @@ public interface ProductMapper {
   @Mapping(target = "updatedAt", expression = "java(Instant.now())")
   ProductEntity toEntity(ProductCreateDtoRequest dto);
 
-  @Mapping(target = "files", ignore = true)
   Product toDto(ProductEntity entity);
+
+  default Product toDto(ProductEntity entity, List<String> fileUrls) {
+    Product product = toDto(entity);
+    product.setFileUrls(fileUrls);
+    return product;
+  }
+
+  List<Product> toDto(List<ProductEntity> entities);
 }
