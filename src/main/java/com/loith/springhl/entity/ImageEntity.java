@@ -2,30 +2,32 @@ package com.loith.springhl.entity;
 
 import java.time.Instant;
 import java.util.UUID;
+
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.relational.core.mapping.Column;
-import org.springframework.data.relational.core.mapping.Table;
 
-@Table("product_images")
+@Entity
+@Table(name = "product_images")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class ImageEntity {
 
-  @Id private UUID id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.AUTO)
+  private UUID id;
 
-  @Column("product_id")
+  @Column(name = "product_id")
   private UUID productId;
 
-  @Column("image_url")
+  @Column(name = "image_url")
   private String imageUrl;
 
-  @Column("created_at")
+  @Column(name = "created_at")
   private Instant createdAt;
 
-  @Column("updated_at")
+  @Column(name = "updated_at")
   private Instant updatedAt;
 }
