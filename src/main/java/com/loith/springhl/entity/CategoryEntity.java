@@ -2,25 +2,28 @@ package com.loith.springhl.entity;
 
 import java.time.Instant;
 import java.util.UUID;
+
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.relational.core.mapping.Column;
-import org.springframework.data.relational.core.mapping.Table;
 
-@Table("categories")
+@Entity
+@Table(name = "categories")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class CategoryEntity {
 
-  @Id private UUID id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.AUTO)
+  private UUID id;
+
   private String name;
 
-  @Column("created_at")
+  @Column(name = "created_at")
   private Instant createdAt;
 
-  @Column("updated_at")
+  @Column(name = "updated_at")
   private Instant updatedAt;
 }
