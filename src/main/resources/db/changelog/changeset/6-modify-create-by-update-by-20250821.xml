@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
+
+    <changeSet id="6" author="loith">
+
+        <addColumn schemaName="public" tableName="users">
+            <column name="created_by" type="UUID">
+                <constraints references="users(id)" nullable="true" referencedTableName="users" foreignKeyName="fk_users_created_by_id"/>
+            </column>
+            <column name="updated_by" type="UUID">
+                <constraints references="users(id)" nullable="true" referencedTableName="users" foreignKeyName="fk_users_updated_by_id"/>
+            </column>
+        </addColumn>
+
+        <insert tableName="users">
+            <column name="id" value="faa8dd87-825f-45a7-8bd3-d78950f52e72" />
+            <column name="username" value="admin1" />
+            <column name="password" value="$2a$10$Xl9exvzWAAnc8MNpy.gDoeC1udbejsXXOUM8TJHG63fe9BHz6W4kS" />
+        </insert>
+
+        <update catalogName="liquibase" schemaName="public" tableName="users">
+            <column name="created_by" value="faa8dd87-825f-45a7-8bd3-d78950f52e72"/>
+            <column name="updated_by" value="faa8dd87-825f-45a7-8bd3-d78950f52e72"/>
+        </update>
+
+        <addNotNullConstraint tableName="users" columnName="created_by" columnDataType="UUID"/>
+        <addNotNullConstraint tableName="users" columnName="updated_by" columnDataType="UUID"/>
+
+    </changeSet>
+
+</databaseChangeLog>
