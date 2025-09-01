@@ -1,9 +1,8 @@
 package com.loith.springhl.entity;
 
+import jakarta.persistence.*;
 import java.time.Instant;
 import java.util.UUID;
-
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

@@ -1,10 +1,9 @@
 package com.loith.springhl.entity;
 
-import java.time.Instant;
-import java.util.UUID;
-
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
+import java.time.Instant;
+import java.util.UUID;
 import lombok.*;
 
 @Entity
@@ -35,7 +34,9 @@ public class ProductEntity {
   private Instant createdAt;
 
   @Column(name = "updated_at")
-  @Schema(description = "Timestamp when the product was last updated", example = "2024-08-20T12:00:00Z")
+  @Schema(
+      description = "Timestamp when the product was last updated",
+      example = "2024-08-20T12:00:00Z")
   private Instant updatedAt;
 
   @Column(name = "category_id")

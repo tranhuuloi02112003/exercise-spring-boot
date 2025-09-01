@@ -3,12 +3,11 @@ package com.loith.springhl.controller;
 import com.loith.springhl.dto.request.ProductCreateDtoRequest;
 import com.loith.springhl.dto.response.Product;
 import com.loith.springhl.service.ProductService;
-import java.util.List;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -20,23 +19,29 @@ import org.springframework.web.bind.annotation.*;
 public class ProductController {
   private final ProductService productService;
 
-  @Operation(summary = "Create a new product", description = "Create a new product with provided details")
-  @ApiResponses(value = {
-          @ApiResponse(responseCode = "201", description = "Product created successfully"),
-          @ApiResponse(responseCode = "400", description = "Invalid input data"),
-          @ApiResponse(responseCode = "500", description = "Internal server error")
-  })
+  @Operation(
+      summary = "Create a new product",
+      description = "Create a new product with provided details")
+  @ApiResponses(
+      value = {
+        @ApiResponse(responseCode = "201", description = "Product created successfully"),
+        @ApiResponse(responseCode = "400", description = "Invalid input data"),
+        @ApiResponse(responseCode = "500", description = "Internal server error")
+      })
   @PostMapping()
   @ResponseStatus(HttpStatus.CREATED)
   public Product createProduct(@RequestBody ProductCreateDtoRequest productCreateDtoRequest) {
     return productService.createProduct(productCreateDtoRequest);
   }
 
-  @Operation(summary = "Get all products", description = "Retrieve a list of all available products")
-  @ApiResponses(value = {
-          @ApiResponse(responseCode = "200", description = "Successfully retrieved product list"),
-          @ApiResponse(responseCode = "500", description = "Internal server error")
-  })
+  @Operation(
+      summary = "Get all products",
+      description = "Retrieve a list of all available products")
+  @ApiResponses(
+      value = {
+        @ApiResponse(responseCode = "200", description = "Successfully retrieved product list"),
+        @ApiResponse(responseCode = "500", description = "Internal server error")
+      })
   @GetMapping
   public List<Product> getAllProducts() {
     return productService.getAll();

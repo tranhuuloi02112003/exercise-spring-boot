@@ -35,10 +35,10 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     // Map dữ liệu từ UserEntity sang UserDetailsCustom vì method này trả về UserDetails (class tuỳ
     // chỉnh để Spring Security hiểu)
 
-      return UserDetailsCustom.builder()
-              .id(userEntity.getId())
-              .username(userEntity.getUsername())
-              .password(userEntity.getPassword())
-              .build();
+    return UserDetailsCustom.builder()
+        .id(userEntity.getId())
+        .username(userEntity.getUsername())
+        .password(userEntity.getPassword())
+        .build();
   }
 }

@@ -3,7 +3,6 @@ package com.loith.springhl.configuration;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
-
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
