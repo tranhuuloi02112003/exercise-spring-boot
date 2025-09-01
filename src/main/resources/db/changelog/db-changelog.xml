@@ -10,5 +10,6 @@
     <include file="/db/changelog/changeset/4-create-product-images-table-20250814.xml"/>
     <include file="/db/changelog/changeset/5-create-users-table-20250821.xml"/>
     <include file="/db/changelog/changeset/6-modify-create-by-update-by-20250821.xml"/>
+    <include file="/db/changelog/changeset/7-create-token-table-20250901.xml"/>
 
 </databaseChangeLog>

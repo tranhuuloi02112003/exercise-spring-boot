@@ -24,10 +24,9 @@ repositories {
     mavenCentral()
 }
 
-//tasks.compileJava{
-//    dependsOn "spotlessApply"
-//}
-
+tasks.compileJava {
+    dependsOn 'spotlessApply'
+}
 spotless {
     java {
         googleJavaFormat()

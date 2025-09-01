@@ -1,28 +1,26 @@
 package com.loith.springhl.entity;
 
 import jakarta.persistence.*;
-import java.time.Instant;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Entity
-@Table(name = "categories")
+@Table(name = "tokens")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CategoryEntity {
-
+@Entity
+@Builder
+public class TokenEntity {
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
   private UUID id;
 
-  private String name;
+  @Column(name = "access_token")
+  private String accessToken;
 
-  @Column(name = "created_at")
-  private Instant createdAt;
-
-  @Column(name = "updated_at")
-  private Instant updatedAt;
+  @Column(name = "refresh_token")
+  private String refreshToken;
 }
