@@ -1,6 +1,7 @@
 package com.loith.springhl.controller;
 
 import com.loith.springhl.dto.request.ProductCreateDtoRequest;
+import com.loith.springhl.dto.response.ApiResponseDTO;
 import com.loith.springhl.dto.response.Product;
 import com.loith.springhl.service.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -31,9 +32,13 @@ public class ProductController {
       })
   @PostMapping()
   @ResponseStatus(HttpStatus.CREATED)
-  public Product createProduct(
+  public ApiResponseDTO<Product> createProduct(
       @Valid @RequestBody ProductCreateDtoRequest productCreateDtoRequest) {
-    return productService.createProduct(productCreateDtoRequest);
+    return ApiResponseDTO.<Product>builder()
+        .code(HttpStatus.CREATED.toString())
+        .message("Product created successfully")
+        .result(productService.createProduct(productCreateDtoRequest))
+        .build();
   }
 
   @Operation(
