@@ -1,6 +1,7 @@
 package com.loith.springhl.entity;
 
 import jakarta.persistence.*;
+import java.time.Instant;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,4 +24,12 @@ public class TokenEntity {
 
   @Column(name = "refresh_token")
   private String refreshToken;
+
+  @Column(name = "created_at", nullable = false, updatable = false)
+  private Instant createdAt;
+
+  @PrePersist
+  void prePersist() {
+    if (createdAt == null) createdAt = Instant.now();
+  }
 }
