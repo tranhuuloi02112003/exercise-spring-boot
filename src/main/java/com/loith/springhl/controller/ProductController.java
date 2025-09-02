@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -30,7 +31,8 @@ public class ProductController {
       })
   @PostMapping()
   @ResponseStatus(HttpStatus.CREATED)
-  public Product createProduct(@RequestBody ProductCreateDtoRequest productCreateDtoRequest) {
+  public Product createProduct(
+      @Valid @RequestBody ProductCreateDtoRequest productCreateDtoRequest) {
     return productService.createProduct(productCreateDtoRequest);
   }
 
