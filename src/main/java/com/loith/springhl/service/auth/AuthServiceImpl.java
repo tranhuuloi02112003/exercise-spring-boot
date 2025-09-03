@@ -6,8 +6,11 @@ import com.loith.springhl.dto.response.AuthResponse;
 import com.loith.springhl.entity.TokenEntity;
 import com.loith.springhl.help.JwtTokenHelper;
 import com.loith.springhl.repository.TokenRepository;
-import java.util.UUID;
+import com.loith.springhl.service.token.TokenBlacklistService;
+import java.time.Duration;
+import java.time.Instant;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -20,6 +23,7 @@ public class AuthServiceImpl implements AuthService {
   private final AuthenticationManager authenticationManager;
   private final JwtTokenHelper jwtTokenHelper;
   private final TokenRepository tokenRepository;
+  private final TokenBlacklistService tokenBlacklistService;
 
   @Override
   public AuthResponse login(AuthDtoRequest request) {
@@ -37,21 +41,22 @@ public class AuthServiceImpl implements AuthService {
 
   @Override
   @Transactional
-  public void logout(String bearerToken) {
+  public ResponseEntity<Void> logout(String bearerToken) {
     if (bearerToken == null || !bearerToken.startsWith("Bearer ")) {
       throw new BadCredentialsException("Authorization header is missing or invalid");
     }
 
     String access = bearerToken.substring("Bearer ".length());
-    String tokenId = jwtTokenHelper.extractTokenId(access);
+    Instant tokenExp = jwtTokenHelper.extractExpiration(access).toInstant();
 
-    TokenEntity tokenEntity =
-        tokenRepository
-            .findById(UUID.fromString(tokenId))
-            .orElseThrow(() -> new BadCredentialsException("Token not recognized"));
+    long secondLeft = Math.max(0L, Duration.between(Instant.now(), tokenExp).getSeconds());
 
-    tokenEntity.setAccessToken(access);
-    tokenRepository.save(tokenEntity);
+    if (secondLeft > 0) {
+      String tokenId = jwtTokenHelper.extractTokenId(access);
+      tokenBlacklistService.blacklist(tokenId, Duration.ofSeconds(secondLeft));
+    }
+
+    return ResponseEntity.noContent().build();
   }
 
   @Override

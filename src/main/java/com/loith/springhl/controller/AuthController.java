@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,8 +28,8 @@ public class AuthController {
 
   @PostMapping("/logout")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  public void logout(@RequestHeader("Authorization") String authorization) {
-    authService.logout(authorization);
+  public ResponseEntity<Void> logout(@RequestHeader("Authorization") String authorization) {
+    return authService.logout(authorization);
   }
 
   @PostMapping("/renew-token")

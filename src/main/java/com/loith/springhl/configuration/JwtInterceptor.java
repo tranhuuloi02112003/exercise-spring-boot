@@ -2,8 +2,8 @@ package com.loith.springhl.configuration;
 
 import com.loith.springhl.entity.UserEntity;
 import com.loith.springhl.help.JwtTokenHelper;
-import com.loith.springhl.repository.TokenRepository;
 import com.loith.springhl.repository.UserRepository;
+import com.loith.springhl.service.token.TokenBlacklistService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,7 +24,7 @@ public class JwtInterceptor extends OncePerRequestFilter {
 
   private final UserRepository userRepository;
   private final JwtTokenHelper jwtTokenHelper;
-  private final TokenRepository tokenRepository;
+  private final TokenBlacklistService tokenBlacklistService;
 
   @Override
   protected void doFilterInternal(
@@ -44,12 +44,11 @@ public class JwtInterceptor extends OncePerRequestFilter {
       throw new BadCredentialsException("Invalid token");
     }
 
-    tokenRepository
-        .findByAccessToken(tokenWithoutPrefix)
-        .ifPresent(
-            tokenEntity -> {
-              throw new BadCredentialsException("Token expired");
-            });
+    String tokenId = jwtTokenHelper.extractTokenId(tokenWithoutPrefix);
+
+    if (tokenBlacklistService.isBlacklisted(tokenId)) {
+      throw new BadCredentialsException("Token is logged out");
+    }
 
     String username = jwtTokenHelper.extractUsername(tokenWithoutPrefix);
     if (username != null) {
