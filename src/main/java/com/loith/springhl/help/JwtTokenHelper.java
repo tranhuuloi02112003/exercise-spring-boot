@@ -19,26 +19,32 @@ public class JwtTokenHelper {
   @Value("${spring.security.secret-key}")
   private String secretKey;
 
+  @Value("${spring.security.access-minutes}")
+  private int accessMinutes;
+
+  @Value("${spring.security.refresh-minutes}")
+  private int refreshMinutes;
+
   private SecretKey getSignInKey() {
     return Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
   }
 
-  public String generateToken(String username, UUID uuid) {
+  public String generateToken(String username, UUID tokenId) {
     return Jwts.builder()
         .subject(username)
-        .claims(Map.of("tokenType", "accessToken", "tokenId", uuid))
+        .claims(Map.of("tokenType", "accessToken", "tokenId", tokenId.toString()))
         .issuedAt(new Date(System.currentTimeMillis()))
-        .expiration(DateUtils.getTime(5))
+        .expiration(DateUtils.getTime(accessMinutes))
         .signWith(getSignInKey())
         .compact();
   }
 
-  public String refreshToken(String username) {
+  public String generateRefreshToken(String username, UUID tokenId) {
     return Jwts.builder()
         .subject(username)
-        .claims(Map.of("tokenType", "refreshToken"))
+        .claims(Map.of("tokenType", "refreshToken", "tokenId", tokenId.toString()))
         .issuedAt(new Date(System.currentTimeMillis()))
-        .expiration(DateUtils.getTime(7))
+        .expiration(DateUtils.getTime(refreshMinutes))
         .signWith(getSignInKey())
         .compact();
   }
@@ -49,10 +55,6 @@ public class JwtTokenHelper {
 
   public Date extractExpiration(String token) {
     return extractClaim(token, Claims::getExpiration);
-  }
-
-  public String extractId(String token) {
-    return extractClaim(token, Claims::getId);
   }
 
   public String extractTokenType(String token) {
