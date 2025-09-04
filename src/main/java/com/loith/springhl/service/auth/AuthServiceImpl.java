@@ -6,13 +6,11 @@ import com.loith.springhl.dto.response.AuthResponse;
 import com.loith.springhl.entity.UserEntity;
 import com.loith.springhl.help.JwtTokenHelper;
 import com.loith.springhl.repository.UserRepository;
-import com.loith.springhl.service.token.RefreshTokenStore;
-import com.loith.springhl.service.token.TokenBlacklistService;
+import com.loith.springhl.repository.redis.RedisRepository;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -26,14 +24,10 @@ import org.springframework.transaction.annotation.Transactional;
 public class AuthServiceImpl implements AuthService {
   private static final String BEARER_PREFIX = "Bearer ";
 
-  @Value("${spring.security.refresh-minutes}")
-  private int refreshMinutes;
-
   private final AuthenticationManager authenticationManager;
   private final JwtTokenHelper jwtTokenHelper;
-  private final TokenBlacklistService tokenBlacklistService;
-  private final RefreshTokenStore refreshTokenStore;
   private final UserRepository userRepository;
+  private final RedisRepository redisRepository;
 
   @Override
   public AuthResponse login(AuthDtoRequest request) {
@@ -55,7 +49,7 @@ public class AuthServiceImpl implements AuthService {
             .findByUsername(request.getUsername())
             .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
-    refreshTokenStore.save(user.getId(), refreshUuid.toString());
+    redisRepository.save(user.getId(), refreshUuid.toString());
 
     return AuthResponse.builder().accessToken(accessToken).refreshToken(refreshToken).build();
   }
@@ -75,7 +69,7 @@ public class AuthServiceImpl implements AuthService {
 
     if (ttlSec > 0) {
       String tokenId = jwtTokenHelper.extractTokenId(access);
-      tokenBlacklistService.blacklist(tokenId, Duration.ofSeconds(ttlSec));
+      redisRepository.blacklist(tokenId, Duration.ofSeconds(ttlSec));
     }
 
     return ResponseEntity.noContent().build();
@@ -107,12 +101,12 @@ public class AuthServiceImpl implements AuthService {
     UUID userId = user.getId();
 
     // Kiểm tra refresh tồn tại trong Redis
-    if (!refreshTokenStore.exists(userId, refreshId)) {
+    if (!redisRepository.exists(userId, refreshId)) {
       throw new BadCredentialsException("Refresh token is invalid or rotated");
     }
 
     // Xoá refresh cũ (rotate)
-    refreshTokenStore.delete(userId, refreshId);
+    redisRepository.delete(userId, refreshId);
 
     // Phát hành token mới
     UUID newAccessUuid = UUID.randomUUID();
@@ -122,7 +116,7 @@ public class AuthServiceImpl implements AuthService {
     String newRefresh = jwtTokenHelper.generateRefreshToken(username, newRefreshUuid);
 
     // Lưu refresh
-    refreshTokenStore.save(userId, newRefreshUuid.toString());
+    redisRepository.save(userId, newRefreshUuid.toString());
 
     return AuthResponse.builder().accessToken(newAccess).refreshToken(newRefresh).build();
   }

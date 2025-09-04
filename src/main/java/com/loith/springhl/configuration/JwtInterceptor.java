@@ -3,7 +3,7 @@ package com.loith.springhl.configuration;
 import com.loith.springhl.entity.UserEntity;
 import com.loith.springhl.help.JwtTokenHelper;
 import com.loith.springhl.repository.UserRepository;
-import com.loith.springhl.service.token.TokenBlacklistService;
+import com.loith.springhl.repository.redis.RedisRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,7 +24,7 @@ public class JwtInterceptor extends OncePerRequestFilter {
 
   private final UserRepository userRepository;
   private final JwtTokenHelper jwtTokenHelper;
-  private final TokenBlacklistService tokenBlacklistService;
+  private final RedisRepository redisRepository;
 
   @Override
   protected void doFilterInternal(
@@ -46,7 +46,7 @@ public class JwtInterceptor extends OncePerRequestFilter {
 
     String tokenId = jwtTokenHelper.extractTokenId(tokenWithoutPrefix);
 
-    if (tokenBlacklistService.isBlacklisted(tokenId)) {
+    if (redisRepository.isBlacklisted(tokenId)) {
       throw new BadCredentialsException("Token is logged out");
     }
 
