@@ -10,9 +10,9 @@ import com.loith.springhl.service.token.RefreshTokenStore;
 import com.loith.springhl.service.token.TokenBlacklistService;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Date;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -25,6 +25,9 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
   private static final String BEARER_PREFIX = "Bearer ";
+
+  @Value("${spring.security.refresh-minutes}")
+  private int refreshMinutes;
 
   private final AuthenticationManager authenticationManager;
   private final JwtTokenHelper jwtTokenHelper;
@@ -52,14 +55,7 @@ public class AuthServiceImpl implements AuthService {
             .findByUsername(request.getUsername())
             .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
-    Date refreshExp = jwtTokenHelper.extractExpiration(refreshToken);
-    long refreshTtlSec =
-        Math.max(0L, Duration.between(Instant.now(), refreshExp.toInstant()).getSeconds());
-
-    if (refreshTtlSec > 0) {
-      refreshTokenStore.save(
-          user.getId(), refreshUuid.toString(), Duration.ofSeconds(refreshTtlSec));
-    }
+    refreshTokenStore.save(user.getId(), refreshUuid.toString());
 
     return AuthResponse.builder().accessToken(accessToken).refreshToken(refreshToken).build();
   }
@@ -125,14 +121,8 @@ public class AuthServiceImpl implements AuthService {
     UUID newRefreshUuid = UUID.randomUUID();
     String newRefresh = jwtTokenHelper.generateRefreshToken(username, newRefreshUuid);
 
-    // Lưu refresh mới với TTL khớp exp
-    Date newRefreshExp = jwtTokenHelper.extractExpiration(newRefresh);
-    long newRefreshTtlSec =
-        Math.max(0L, Duration.between(Instant.now(), newRefreshExp.toInstant()).getSeconds());
-    if (newRefreshTtlSec > 0) {
-      refreshTokenStore.save(
-          userId, newRefreshUuid.toString(), Duration.ofSeconds(newRefreshTtlSec));
-    }
+    // Lưu refresh
+    refreshTokenStore.save(userId, newRefreshUuid.toString());
 
     return AuthResponse.builder().accessToken(newAccess).refreshToken(newRefresh).build();
   }

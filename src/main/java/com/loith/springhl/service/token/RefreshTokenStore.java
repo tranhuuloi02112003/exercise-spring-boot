@@ -1,10 +1,9 @@
 package com.loith.springhl.service.token;
 
-import java.time.Duration;
 import java.util.UUID;
 
 public interface RefreshTokenStore {
-  void save(UUID userId, String tokenId, Duration ttl);
+  void save(UUID userId, String tokenId);
 
   boolean exists(UUID userId, String tokenId);
 
