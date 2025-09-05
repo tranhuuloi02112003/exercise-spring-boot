@@ -1,10 +1,10 @@
 package com.loith.springhl.repository.redis;
 
+import com.loith.springhl.dto.response.Session;
 import java.time.Duration;
-import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -13,11 +13,10 @@ public class RedisRepositoryImpl implements RedisRepository {
   @Value("${spring.security.refresh-minutes}")
   private int refreshMinutes;
 
-  private final StringRedisTemplate redis;
+  private final RedisTemplate<String, Object> redis;
 
-  // Thêm id user để revoke-all theo user, quản lý đa thiết bị
-  private static String refreshKey(UUID userId, String refreshId) {
-    return "rt:%s:%s".formatted(userId, refreshId);
+  private String sessionKey(String refreshJti) {
+    return "sess:" + refreshJti;
   }
 
   private static String blacklistKey(String accessJti) {
@@ -35,17 +34,22 @@ public class RedisRepositoryImpl implements RedisRepository {
   }
 
   @Override
-  public void save(UUID userId, String tokenId) {
-    redis.opsForValue().set(refreshKey(userId, tokenId), "1", Duration.ofMinutes(refreshMinutes));
+  public void saveSession(Session session) {
+    redis
+        .opsForValue()
+        .set(
+            sessionKey(session.getRefreshJti().toString()),
+            session,
+            Duration.ofMinutes(refreshMinutes));
   }
 
   @Override
-  public boolean exists(UUID userId, String tokenId) {
-    return redis.hasKey(refreshKey(userId, tokenId));
+  public boolean existsSession(String tokenId) {
+    return redis.hasKey(sessionKey(tokenId));
   }
 
   @Override
-  public void delete(UUID userId, String tokenId) {
-    redis.delete(refreshKey(userId, tokenId));
+  public void deleteSession(String tokenId) {
+    redis.delete(sessionKey(tokenId));
   }
 }

@@ -3,6 +3,7 @@ package com.loith.springhl.service.auth;
 import com.loith.springhl.dto.request.AuthDtoRequest;
 import com.loith.springhl.dto.request.AuthRenewRequest;
 import com.loith.springhl.dto.response.AuthResponse;
+import com.loith.springhl.dto.response.Session;
 import com.loith.springhl.entity.UserEntity;
 import com.loith.springhl.help.JwtTokenHelper;
 import com.loith.springhl.repository.UserRepository;
@@ -43,13 +44,19 @@ public class AuthServiceImpl implements AuthService {
     UUID refreshUuid = UUID.randomUUID();
     String refreshToken = jwtTokenHelper.generateRefreshToken(request.getUsername(), refreshUuid);
 
-    // 4) Lưu refresh vào Redis theo userId với TTL = exp(refresh) - now
+    // 4) Lưu refresh vào Redis để sau renew
     UserEntity user =
         userRepository
             .findByUsername(request.getUsername())
             .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
-    redisRepository.save(user.getId(), refreshUuid.toString());
+    Session session =
+        Session.builder()
+            .refreshJti(refreshUuid)
+            .userId(user.getId())
+            .username(user.getUsername())
+            .build();
+    redisRepository.saveSession(session);
 
     return AuthResponse.builder().accessToken(accessToken).refreshToken(refreshToken).build();
   }
@@ -98,15 +105,14 @@ public class AuthServiceImpl implements AuthService {
         userRepository
             .findByUsername(username)
             .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-    UUID userId = user.getId();
 
     // Kiểm tra refresh tồn tại trong Redis
-    if (!redisRepository.exists(userId, refreshId)) {
+    if (!redisRepository.existsSession(refreshId)) {
       throw new BadCredentialsException("Refresh token is invalid or rotated");
     }
 
     // Xoá refresh cũ (rotate)
-    redisRepository.delete(userId, refreshId);
+    redisRepository.deleteSession(refreshId);
 
     // Phát hành token mới
     UUID newAccessUuid = UUID.randomUUID();
@@ -116,7 +122,13 @@ public class AuthServiceImpl implements AuthService {
     String newRefresh = jwtTokenHelper.generateRefreshToken(username, newRefreshUuid);
 
     // Lưu refresh
-    redisRepository.save(userId, newRefreshUuid.toString());
+    Session session =
+        Session.builder()
+            .refreshJti(newRefreshUuid)
+            .userId(user.getId())
+            .username(user.getUsername())
+            .build();
+    redisRepository.saveSession(session);
 
     return AuthResponse.builder().accessToken(newAccess).refreshToken(newRefresh).build();
   }

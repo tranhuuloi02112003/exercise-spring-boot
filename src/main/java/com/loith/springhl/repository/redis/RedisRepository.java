@@ -1,7 +1,7 @@
 package com.loith.springhl.repository.redis;
 
+import com.loith.springhl.dto.response.Session;
 import java.time.Duration;
-import java.util.UUID;
 
 public interface RedisRepository {
 
@@ -9,9 +9,9 @@ public interface RedisRepository {
 
   boolean isBlacklisted(String tokenId);
 
-  void save(UUID userId, String tokenId);
+  void saveSession(Session session);
 
-  boolean exists(UUID userId, String tokenId);
+  boolean existsSession(String tokenId);
 
-  void delete(UUID userId, String tokenId);
+  void deleteSession(String tokenId);
 }
