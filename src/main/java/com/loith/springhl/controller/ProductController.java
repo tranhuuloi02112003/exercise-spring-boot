@@ -1,12 +1,14 @@
 package com.loith.springhl.controller;
 
 import com.loith.springhl.dto.request.ProductCreateDtoRequest;
+import com.loith.springhl.dto.response.ApiResponseDTO;
 import com.loith.springhl.dto.response.Product;
 import com.loith.springhl.service.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -30,8 +32,13 @@ public class ProductController {
       })
   @PostMapping()
   @ResponseStatus(HttpStatus.CREATED)
-  public Product createProduct(@RequestBody ProductCreateDtoRequest productCreateDtoRequest) {
-    return productService.createProduct(productCreateDtoRequest);
+  public ApiResponseDTO<Product> createProduct(
+      @Valid @RequestBody ProductCreateDtoRequest productCreateDtoRequest) {
+    return ApiResponseDTO.<Product>builder()
+        .code(HttpStatus.CREATED.toString())
+        .message("Product created successfully")
+        .result(productService.createProduct(productCreateDtoRequest))
+        .build();
   }
 
   @Operation(

@@ -11,5 +11,7 @@
     <include file="/db/changelog/changeset/5-create-users-table-20250821.xml"/>
     <include file="/db/changelog/changeset/6-modify-create-by-update-by-20250821.xml"/>
     <include file="/db/changelog/changeset/7-create-token-table-20250901.xml"/>
+    <include file="/db/changelog/changeset/8-add-created-at-to-tokens-20250902.xml"/>
+    <include file="/db/changelog/changeset/9-remove table-tokens-20250903.xml"/>
 
 </databaseChangeLog>
